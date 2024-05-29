@@ -1,44 +1,46 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="css/style.css" />
-    <title>App Tempo</title>
-  </head>
-  <body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/img/icons8-nuvens-96.png" type="image/x-icon">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Clima Tempo</title>
+</head>
+<body>
     <div class="container">
-      <div class="card">
-        <h1>App do Clima</h1>
+        <div class="card">
+            <h1>Clima Tempo</h1>
 
-        <div class="search_section">
-          <input id="location" type="text" placeholder="Sua localização" />
-          <div id="search" class="icon">
-            <ion-icon name="search-outline"></ion-icon>
-          </div>
+            <div class="search_section">
+                <input id="location" list="citySuggestions" type="text" placeholder="Sua localização (Cidade, País)">
+                <datalist id="citySuggestions"></datalist>
+                <div id="search" class="icon">
+                    <ion-icon name="search-outline"></ion-icon>
+                </div>
+            </div>
+
+            <div class="weather_info">
+                <img id="weatherImage" src="./img/clear.png" alt="imagem representando o clima">
+                <h2 id="temperature">22 °C</h2>
+                <span id="weatherStatus">Status do clima</span>
+                <p id="cityName">Nome da Cidade</p>
+
+                <div class="expecifics_info">
+                    <div id="feelsLike">Sensação Térmica</div>
+                    <div id="humidity">Umidade</div>
+                    <div id="windSpeed">Velocidade do Vento</div>
+                    <div id="dateTime"></div>
+                </div>
+            </div>
         </div>
-
-        <div class="weather_info">
-          <img src="./img/clear.png" alt="imagem representando o clima" />
-          <h2>22 °C</h2>
-          <span>Status do clima</span>
-          <p>Nome da Cidade</p>
-
-          <div class="expecifics_info">
-            <div>Sencação Termica</div>
-            <div>Umidade</div>
-          </div>
-        </div>
-      </div>
     </div>
-    <script
-      type="module"
-      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
-    ></script>
-    <script
-      nomodule
-      src="https://unpkg .com/ionicons@7.1.0/dist/ionicons/ionicons.js"
-    ></script>
-    <script src="./main.js" type="module"></script>
-  </body>
+    <footer class="footer">
+        <p>&copy; 2024 Clima Tempo🌥️. Todos os direitos reservados.</p>
+    </footer>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@2.3.0/build/global/luxon.min.js"></script>
+    <script type="module" src="main.js"></script>
+</body>
 </html>
