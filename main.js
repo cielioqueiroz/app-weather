@@ -1,10 +1,12 @@
-import { apiKey } from './config/environment.js'; // Certifique-se de que o caminho está correto
+import { apiKey } from './config/environment.js';
 
 const apiUrl = 'https://api.openweathermap.org/data/2.5/weather';
-const apiAutocompleteUrl = 'https://api.teleport.org/api/cities/?search='; // Usando Teleport API para autocomplete
+const apiAutocompleteUrl = 'https://api.teleport.org/api/cities/?search=';
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM completamente carregado e analisado'); // Log para depuração
+    const footerYear = document.querySelector('.footer p');
+    const currentYear = new Date().getFullYear();
+    footerYear.innerHTML = `&copy; ${currentYear} Clima Tempo🌥️. Todos os direitos reservados.`;
 
     async function getWeatherData(city, state = '') {
         try {
@@ -13,48 +15,48 @@ document.addEventListener('DOMContentLoaded', () => {
                 query = `${city},${state}`;
             }
             query = query.replace(/\s+/g, '%20');
-            console.log('Query para API:', query); // Log para depuração
+            console.log('Query para API:', query); 
             const response = await fetch(`${apiUrl}?q=${query}&appid=${apiKey}&units=metric&lang=pt_br`);
             if (!response.ok) {
                 if (state) {
                     console.log('Primeira tentativa falhou, tentando apenas com a cidade.');
-                    return await getWeatherData(city); // Tenta novamente apenas com a cidade
+                    return await getWeatherData(city); 
                 }
                 throw new Error('Cidade não encontrada');
             }
             const data = await response.json();
-            console.log('Dados recebidos:', data); // Log para depuração
+            console.log('Dados recebidos:', data); 
             displayWeatherData(data);
         } catch (error) {
             console.error('Erro ao buscar os dados do clima:', error);
             displayError(error.message);
             setTimeout(() => {
-                document.querySelector('.weather_info').innerHTML = ''; // Limpar mensagem de erro após 5 segundos
+                document.querySelector('.weather_info').innerHTML = ''; 
             }, 5000); 
         }
     }
 
     async function getWeatherDataByCoords(lat, lon) {
         try {
-            console.log('Buscando dados para as coordenadas:', lat, lon); // Log para depuração
+            console.log('Buscando dados para as coordenadas:', lat, lon); 
             const response = await fetch(`${apiUrl}?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=pt_br`);
             if (!response.ok) {
                 throw new Error('Localização não encontrada');
             }
             const data = await response.json();
-            console.log('Dados recebidos:', data); // Log para depuração
+            console.log('Dados recebidos:', data); 
             displayWeatherData(data, true);
         } catch (error) {
             console.error('Erro ao buscar os dados do clima por coordenadas:', error);
             displayError(error.message);
             setTimeout(() => {
-                document.querySelector('.weather_info').innerHTML = ''; // Limpar mensagem de erro após 5 segundos
+                document.querySelector('.weather_info').innerHTML = ''; 
             }, 5000); 
         }
     }
 
     function displayWeatherData(data, isCurrentLocation = false) {
-        console.log('Exibindo dados na UI'); // Log para depuração
+        console.log('Exibindo dados na UI'); 
 
         const weatherImage = document.getElementById('weatherImage');
         const temperature = document.getElementById('temperature');
@@ -76,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 snow: 'snow.png'
             };
 
-            const timezoneOffset = data.timezone; // Offset em segundos
+            const timezoneOffset = data.timezone; 
             const localDateTime = luxon.DateTime.now().setZone('UTC').plus({ seconds: timezoneOffset }).toFormat('dd/MM/yyyy HH:mm');
 
             weatherImage.src = `./img/${weatherIconMap[weatherMain] || 'clear.png'}`;
@@ -88,17 +90,17 @@ document.addEventListener('DOMContentLoaded', () => {
             windSpeed.textContent = `Velocidade do Vento: ${data.wind.speed} m/s`;
             dateTime.textContent = localDateTime;
         } else {
-            console.error('Um ou mais elementos não foram encontrados no DOM'); // Log para depuração
+            console.error('Um ou mais elementos não foram encontrados no DOM'); 
         }
     }
 
     function displayError(message) {
-        console.log('Exibindo erro na UI'); // Log para depuração
+        console.log('Exibindo erro na UI'); 
         const weatherContainer = document.querySelector('.weather_info');
         if (weatherContainer) {
             weatherContainer.innerHTML = `<p class="error">${message}</p>`;
         } else {
-            console.error('Elemento weather_info não encontrado'); // Log para depuração
+            console.error('Elemento weather_info não encontrado'); 
         }
     }
 
@@ -126,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 datalist.appendChild(option);
             });
         } else {
-            console.error('Elemento citySuggestions não encontrado'); // Log para depuração
+            console.error('Elemento citySuggestions não encontrado'); 
         }
     }
 
@@ -136,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (searchButton) {
         searchButton.addEventListener('click', () => {
             const location = locationInput.value;
-            console.log('Botão de pesquisa clicado'); // Log para depuração
+            console.log('Botão de pesquisa clicado'); 
             if (location) {
                 const [city, state] = location.split(',').map(part => part.trim());
                 getWeatherData(city, state);
@@ -145,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     } else {
-        console.error('Botão de pesquisa não encontrado'); // Log para depuração
+        console.error('Botão de pesquisa não encontrado'); 
     }
 
     if (locationInput) {
@@ -160,17 +162,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } else {
                 const query = locationInput.value;
-                if (query.length > 2) { // Só buscar sugestões se o usuário digitou mais de 2 caracteres
+                if (query.length > 2) { 
                     const suggestions = await getCitySuggestions(query);
                     showCitySuggestions(suggestions);
                 }
             }
         });
     } else {
-        console.error('Campo de entrada location não encontrado'); // Log para depuração
+        console.error('Campo de entrada location não encontrado'); 
     }
 
-    // Adicionar funcionalidade de localização automática
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
             const lat = position.coords.latitude;
@@ -180,14 +181,14 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Erro ao obter a localização do usuário:', error);
             displayError('Não foi possível obter a localização. Por favor, insira o nome da cidade.');
             setTimeout(() => {
-                document.querySelector('.weather_info').innerHTML = ''; // Limpar mensagem de erro após 5 segundos
+                document.querySelector('.weather_info').innerHTML = ''; 
             }, 5000); 
         });
     } else {
-        console.error('Geolocalização não é suportada pelo navegador'); // Log para depuração
+        console.error('Geolocalização não é suportada pelo navegador'); 
         displayError('Geolocalização não é suportada pelo navegador. Por favor, insira o nome da cidade.');
         setTimeout(() => {
-            document.querySelector('.weather_info').innerHTML = ''; // Limpar mensagem de erro após 5 segundos
+            document.querySelector('.weather_info').innerHTML = ''; 
         }, 5000); 
     }
 });
