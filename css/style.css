@@ -776,6 +776,13 @@ body.light-theme {
 }
 
 #windSpeed .info-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: var(--accent-color);
+  width: 36px;
+  height: 36px;
   margin-bottom: 2px;
 }
 
