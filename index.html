@@ -35,42 +35,55 @@
             </div>
 
             <div class="weather_info">
-                <div class="weather-main-section">
-                    <img id="weatherImage" src="./img/clear.png" alt="imagem representando o clima">
-                    <h2 id="temperature">22 °C</h2>
-                    <span id="weatherStatus">Status do clima</span>
-                    <div class="temp-minmax-section">
-                        <div class="temp-item-main">
-                            <span class="temp-label-main">MÍN.</span>
-                            <span id="tempMin" class="temp-value-main">--°</span>
-                        </div>
-                        <div class="temp-item-main">
-                            <span class="temp-label-main">MÁX.</span>
-                            <span id="tempMax" class="temp-value-main">--°</span>
+                <div class="current-weather-container">
+                    <!-- Bloco 1: Ícone do Clima -->
+                    <div class="weather-block weather-icon-block">
+                        <img id="weatherImage" src="./img/clear.png" alt="imagem representando o clima">
+                    </div>
+
+                    <!-- Bloco 2: Temperatura Principal -->
+                    <div class="weather-block weather-temperature-block">
+                        <h2 id="temperature">22 °C</h2>
+                    </div>
+
+                    <!-- Bloco 3: Detalhes (Localização, Descrição, Min/Max) -->
+                    <div class="weather-block weather-details-block">
+                        <p id="cityName" class="weather-location">Nome da Cidade</p>
+                        <span id="weatherStatus" class="weather-description">Status do clima</span>
+                        <div class="temp-minmax-section">
+                            <div class="temp-item-main">
+                                <span class="temp-label-main">MÍN.</span>
+                                <span id="tempMin" class="temp-value-main">--°</span>
+                            </div>
+                            <div class="temp-item-main">
+                                <span class="temp-label-main">MÁX.</span>
+                                <span id="tempMax" class="temp-value-main">--°</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <p id="cityName">Nome da Cidade</p>
                 <div id="sunriseSunset" class="sunrise-sunset-row"></div>
 
-                <div class="expecifics_info">
-                    <div id="feelsLike" class="info-card">
+                <div class="details-grid">
+                    <div id="feelsLike" class="detail-card">
                         <div class="info-icon">
                             <ion-icon name="thermometer-outline"></ion-icon>
                         </div>
                         <div class="info-label">Sensação Térmica</div>
                         <div class="info-value"></div>
                     </div>
-                    <div id="humidity" class="info-card">
+                    <div id="humidity" class="detail-card">
                         <div class="info-icon">
                             <ion-icon name="water-outline"></ion-icon>
                         </div>
                         <div class="info-label">Umidade</div>
                         <div class="info-value"></div>
                     </div>
-                    <div id="windSpeed" class="info-card">
+                    <div id="windSpeed" class="detail-card">
                         <div class="info-icon">
-                            <ion-icon name="wind-outline"></ion-icon>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+                                <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/>
+                            </svg>
                         </div>
                         <div class="info-label">Velocidade do Vento</div>
                         <div class="wind-info-container">
@@ -78,38 +91,35 @@
                             <div class="wind-direction" id="windDirection"></div>
                         </div>
                     </div>
-                    <div id="rainChance" class="info-card">
+                    <div id="rainChance" class="detail-card">
                         <div class="info-icon">
                             <ion-icon name="rainy-outline"></ion-icon>
                         </div>
                         <div class="info-label">Chuva</div>
                         <div class="info-value"></div>
                     </div>
-                </div>
-
-                <div class="extra-cards-scroll" id="extraCardsScroll">
-                    <div id="uvCard" class="extra-card">
+                    <div id="uvCard" class="detail-card">
                         <div class="info-icon">
                             <ion-icon name="sunny-outline"></ion-icon>
                         </div>
                         <div class="info-label">Índice UV</div>
                         <div class="info-value" id="uvValue">--</div>
                     </div>
-                    <div id="aqiCard" class="extra-card">
+                    <div id="aqiCard" class="detail-card">
                         <div class="info-icon">
                             <ion-icon name="leaf-outline"></ion-icon>
                         </div>
                         <div class="info-label">Qualidade do Ar</div>
                         <div class="info-value" id="aqiValue">--</div>
                     </div>
-                    <div id="visibilityCard" class="extra-card">
+                    <div id="visibilityCard" class="detail-card">
                         <div class="info-icon">
                             <ion-icon name="eye-outline"></ion-icon>
                         </div>
                         <div class="info-label">Visibilidade</div>
                         <div class="info-value" id="visibilityValue">--</div>
                     </div>
-                    <div id="pressureCard" class="extra-card">
+                    <div id="pressureCard" class="detail-card">
                         <div class="info-icon">
                             <ion-icon name="speedometer-outline"></ion-icon>
                         </div>

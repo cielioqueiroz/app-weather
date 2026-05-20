@@ -188,13 +188,13 @@ async function getAirQuality(lat, lon) {
   }
 }
 
-function displayHourlyForecast(hourlyData, timezoneOffset) {
+function displayHourlyForecast(hourlyData, timezoneOffset, uvIndex = null) {
   const hourlyGrid = document.getElementById('hourlyGrid');
   if (!hourlyGrid) return;
 
   hourlyGrid.innerHTML = '';
 
-  hourlyData.forEach(hour => {
+  hourlyData.forEach((hour, index) => {
     const time = luxon.DateTime.fromSeconds(hour.dt)
       .plus({ seconds: timezoneOffset })
       .toFormat('HH:mm');
@@ -202,6 +202,9 @@ function displayHourlyForecast(hourlyData, timezoneOffset) {
     const temp = Math.round(hour.main.temp);
     const weatherIcon = hour.weather[0].main;
     const iconUrl = getWeatherIconUrl(weatherIcon);
+    const windSpeed = (hour.wind.speed * 3.6).toFixed(1);
+    const visibility = (hour.visibility / 1000).toFixed(1);
+    const uv = uvIndex || '--';
 
     const hourlyItem = document.createElement('div');
     hourlyItem.className = 'hourly-item';
@@ -209,6 +212,20 @@ function displayHourlyForecast(hourlyData, timezoneOffset) {
       <div class="hourly-time">${time}</div>
       <img src="${iconUrl}" alt="clima" style="width: 35px; height: 35px;">
       <div class="hourly-temp">${temp}°C</div>
+      <div class="hourly-details">
+        <div class="hourly-detail-row">
+          <ion-icon name="wind-outline" class="hourly-detail-icon"></ion-icon>
+          <span class="hourly-detail-text">${windSpeed}km/h</span>
+        </div>
+        <div class="hourly-detail-row">
+          <ion-icon name="eye-outline" class="hourly-detail-icon"></ion-icon>
+          <span class="hourly-detail-text">${visibility}km</span>
+        </div>
+        <div class="hourly-detail-row">
+          <ion-icon name="sunny-outline" class="hourly-detail-icon"></ion-icon>
+          <span class="hourly-detail-text">UV ${uv}</span>
+        </div>
+      </div>
     `;
 
     hourlyGrid.appendChild(hourlyItem);
@@ -256,6 +273,8 @@ function getDailyForecastByDay(forecastList, timezoneOffset) {
     const rainProb = Math.round(Math.max(...entries.map(e => (e.pop || 0))) * 100);
     const visibility = Math.round(midday.visibility / 1000 * 10) / 10;
     const pressure = midday.main.pressure;
+    const windSpeed = (midday.wind.speed * 3.6).toFixed(1);
+    const windDeg = midday.wind.deg;
 
     days.push({
       dateStr,
@@ -265,7 +284,9 @@ function getDailyForecastByDay(forecastList, timezoneOffset) {
       tempMax,
       rainProb,
       visibility,
-      pressure
+      pressure,
+      windSpeed,
+      windDeg
     });
   });
 
@@ -281,44 +302,50 @@ function displayDailyForecast(dailyData) {
     const iconUrl = getWeatherIconUrl(day.weatherMain);
     const dateObj = luxon.DateTime.fromISO(day.dateStr);
     const formattedDate = dateObj.toFormat('dd/MM');
+    const windDir = getWindDirection(day.windDeg);
 
     const item = document.createElement('div');
     item.className = 'daily-forecast-item';
     item.innerHTML = `
-      <div class="daily-date-info">
+      <div class="daily-column daily-date-info">
         <div class="daily-date">${formattedDate}</div>
         <div class="daily-day-name">${day.dayName}</div>
       </div>
-      <img class="daily-icon" src="${iconUrl}" alt="${day.weatherMain}">
-      <div class="daily-main-info">
-        <div class="daily-temps-section">
-          <div class="daily-temps">
-            <div class="temp-item">
-              <span class="temp-label">Máx.</span>
-              <span class="temp-max">${day.tempMax}°</span>
-            </div>
-            <div class="temp-item">
-              <span class="temp-label">Mín.</span>
-              <span class="temp-min">${day.tempMin}°</span>
-            </div>
-          </div>
-          <div class="daily-details-grid">
-            <div class="detail-item">
-              <ion-icon name="rainy-outline" class="detail-icon"></ion-icon>
-              <span class="detail-label">Chuva</span>
-              <span class="detail-value">${day.rainProb}%</span>
-            </div>
-            <div class="detail-item">
-              <ion-icon name="eye-outline" class="detail-icon"></ion-icon>
-              <span class="detail-label">Visib.</span>
-              <span class="detail-value">${day.visibility}km</span>
-            </div>
-            <div class="detail-item">
-              <ion-icon name="speedometer-outline" class="detail-icon"></ion-icon>
-              <span class="detail-label">Pressão</span>
-              <span class="detail-value">${day.pressure}hPa</span>
-            </div>
-          </div>
+
+      <div class="daily-column daily-weather-column">
+        <img class="daily-icon" src="${iconUrl}" alt="${day.weatherMain}">
+        <div class="daily-temps-inline">
+          <span class="temp-min">MÍN ${day.tempMin}°</span>
+          <span class="temp-max">MÁX ${day.tempMax}°</span>
+        </div>
+      </div>
+
+      <div class="daily-column daily-detail-column">
+        <ion-icon name="rainy-outline" class="detail-icon"></ion-icon>
+        <span class="detail-label">Chuva</span>
+        <span class="detail-value">${day.rainProb}%</span>
+      </div>
+
+      <div class="daily-column daily-detail-column">
+        <ion-icon name="eye-outline" class="detail-icon"></ion-icon>
+        <span class="detail-label">Visib.</span>
+        <span class="detail-value">${day.visibility}km</span>
+      </div>
+
+      <div class="daily-column daily-detail-column">
+        <ion-icon name="speedometer-outline" class="detail-icon"></ion-icon>
+        <span class="detail-label">Pressão</span>
+        <span class="detail-value">${day.pressure}hPa</span>
+      </div>
+
+      <div class="daily-column daily-detail-column">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" class="detail-icon wind-svg">
+          <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/>
+        </svg>
+        <span class="detail-label">Vento</span>
+        <div class="wind-info-inline">
+          <span class="detail-value">${day.windSpeed}km/h</span>
+          <span class="wind-direction-small">${windDir}</span>
         </div>
       </div>
     `;
@@ -423,7 +450,8 @@ function displayWeatherData(data, isCurrentLocation = false, locationInfo = null
     getAirQuality(lat, lon)
   ]).then(([forecastList, uvValue, aqData]) => {
     if (forecastList.length > 0) {
-      displayHourlyForecast(forecastList.slice(0, 4), data.timezone);
+      const uvDisplay = uvValue ? Math.round(uvValue) : null;
+      displayHourlyForecast(forecastList.slice(0, 4), data.timezone, uvDisplay);
 
       if (elements.rainChance) {
         const pop = Math.round((forecastList[0].pop || 0) * 100);
@@ -434,8 +462,9 @@ function displayWeatherData(data, isCurrentLocation = false, locationInfo = null
 
       if ((elements.tempMin && elements.tempMax) && dailyData.length > 0) {
         const todayData = dailyData[0];
+        const currentTemp = Math.round(data.main.temp);
         const tMin = Math.round(todayData.tempMin);
-        const tMax = Math.round(todayData.tempMax);
+        const tMax = Math.max(currentTemp, Math.round(todayData.tempMax));
         elements.tempMin.textContent = `${tMin}°`;
         elements.tempMax.textContent = `${tMax}°`;
       }
