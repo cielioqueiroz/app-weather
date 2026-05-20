@@ -3,34 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="./img/icons8-nuvens-96.png" type="image/x-icon">
+    <link rel="icon" href="./img/cloud.png" type="image/png">
     <link rel="stylesheet" href="css/style.css">
     <title>Clima Tempo</title>
 </head>
 <body>
+    <div class="theme-toggle">
+        <button id="themeToggle" class="theme-btn" title="Alternar tema">
+            <ion-icon name="moon-outline"></ion-icon>
+        </button>
+    </div>
+
+    <div id="loadingSpinner" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Carregando informações climáticas...</p>
+    </div>
+
     <div class="container">
         <div class="card">
             <h1>Clima Tempo</h1>
 
             <div class="search_section">
-                <input id="location" list="citySuggestions" type="text" placeholder="Digite aqui a localização">
-                <datalist id="citySuggestions"></datalist>
-                <div id="search" class="icon">
-                    <ion-icon name="search-outline"></ion-icon>
+                <div class="geolocation-icon">
+                    <ion-icon name="location-outline"></ion-icon>
                 </div>
+                <input id="location" type="text" placeholder="Digite aqui a localização (cidade ou País)">
+                <div id="citySuggestionsDropdown" class="suggestions-dropdown"></div>
+                <button id="search" class="search-button" title="Pesquisar">
+                    <ion-icon name="search-outline"></ion-icon>
+                </button>
             </div>
 
             <div class="weather_info">
-                <img id="weatherImage" src="./img/clear.png" alt="imagem representando o clima">
-                <h2 id="temperature">22 °C</h2>
-                <span id="weatherStatus">Status do clima</span>
+                <div class="weather-main-section">
+                    <img id="weatherImage" src="./img/clear.png" alt="imagem representando o clima">
+                    <h2 id="temperature">22 °C</h2>
+                    <span id="weatherStatus">Status do clima</span>
+                    <div class="temp-minmax-section">
+                        <div class="temp-item-main">
+                            <span class="temp-label-main">MÍN.</span>
+                            <span id="tempMin" class="temp-value-main">--°</span>
+                        </div>
+                        <div class="temp-item-main">
+                            <span class="temp-label-main">MÁX.</span>
+                            <span id="tempMax" class="temp-value-main">--°</span>
+                        </div>
+                    </div>
+                </div>
                 <p id="cityName">Nome da Cidade</p>
+                <div id="sunriseSunset" class="sunrise-sunset-row"></div>
 
                 <div class="expecifics_info">
-                    <div id="feelsLike">Sensação Térmica</div>
-                    <div id="humidity">Umidade</div>
-                    <div id="windSpeed">Velocidade do Vento</div>
-                    <div id="dateTime"></div>
+                    <div id="feelsLike" class="info-card">
+                        <div class="info-icon">
+                            <ion-icon name="thermometer-outline"></ion-icon>
+                        </div>
+                        <div class="info-label">Sensação Térmica</div>
+                        <div class="info-value"></div>
+                    </div>
+                    <div id="humidity" class="info-card">
+                        <div class="info-icon">
+                            <ion-icon name="water-outline"></ion-icon>
+                        </div>
+                        <div class="info-label">Umidade</div>
+                        <div class="info-value"></div>
+                    </div>
+                    <div id="windSpeed" class="info-card">
+                        <div class="info-icon">
+                            <ion-icon name="wind-outline"></ion-icon>
+                        </div>
+                        <div class="info-label">Velocidade do Vento</div>
+                        <div class="wind-info-container">
+                            <div class="info-value"></div>
+                            <div class="wind-direction" id="windDirection"></div>
+                        </div>
+                    </div>
+                    <div id="rainChance" class="info-card">
+                        <div class="info-icon">
+                            <ion-icon name="rainy-outline"></ion-icon>
+                        </div>
+                        <div class="info-label">Chuva</div>
+                        <div class="info-value"></div>
+                    </div>
+                </div>
+
+                <div class="extra-cards-scroll" id="extraCardsScroll">
+                    <div id="uvCard" class="extra-card">
+                        <div class="info-icon">
+                            <ion-icon name="sunny-outline"></ion-icon>
+                        </div>
+                        <div class="info-label">Índice UV</div>
+                        <div class="info-value" id="uvValue">--</div>
+                    </div>
+                    <div id="aqiCard" class="extra-card">
+                        <div class="info-icon">
+                            <ion-icon name="leaf-outline"></ion-icon>
+                        </div>
+                        <div class="info-label">Qualidade do Ar</div>
+                        <div class="info-value" id="aqiValue">--</div>
+                    </div>
+                    <div id="visibilityCard" class="extra-card">
+                        <div class="info-icon">
+                            <ion-icon name="eye-outline"></ion-icon>
+                        </div>
+                        <div class="info-label">Visibilidade</div>
+                        <div class="info-value" id="visibilityValue">--</div>
+                    </div>
+                    <div id="pressureCard" class="extra-card">
+                        <div class="info-icon">
+                            <ion-icon name="speedometer-outline"></ion-icon>
+                        </div>
+                        <div class="info-label">Pressão</div>
+                        <div class="info-value" id="pressureValue">--</div>
+                    </div>
+                </div>
+
+                <div class="hourly-forecast">
+                    <div class="forecast-tabs">
+                        <button class="tab-btn active" data-tab="hoje">Hoje</button>
+                        <button class="tab-btn" data-tab="proximos">Próximos Dias</button>
+                    </div>
+                    <div id="tabHoje" class="tab-panel active">
+                        <div class="hourly-grid" id="hourlyGrid"></div>
+                    </div>
+                    <div id="tabProximos" class="tab-panel hidden">
+                        <div class="daily-forecast-list" id="dailyForecastList"></div>
+                    </div>
                 </div>
             </div>
         </div>
