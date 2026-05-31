@@ -14,7 +14,7 @@ const API_CONFIG = {
 };
 
 const DOM_SELECTORS = {
-  footerYear: '.footer p',
+  footerYear: '.footer-rights',
   searchButton: '#search',
   locationInput: '#location',
   citySuggestionsDropdown: '#citySuggestionsDropdown',
@@ -649,7 +649,7 @@ function initializeUI() {
   const footerYear = document.querySelector(DOM_SELECTORS.footerYear);
   if (footerYear) {
     const currentYear = new Date().getFullYear();
-    footerYear.innerHTML = `&copy; ${currentYear} Clima Tempo🌥️. Todos os direitos reservados.`;
+    footerYear.innerHTML = `&copy; ${currentYear} Clima Tempo. Todos os direitos reservados.`;
   }
 
   const currentTheme = getTheme();

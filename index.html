@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="./img/cloud.png" type="image/png">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=3">
     <title>Clima Tempo</title>
 </head>
 <body>
@@ -15,7 +18,19 @@
     </div>
 
     <div id="loadingSpinner" class="loading-spinner">
-        <div class="spinner"></div>
+        <div class="weather-loader" aria-hidden="true">
+            <span class="wl-sun"></span>
+            <span class="wl-cloud wl-cloud-far"></span>
+            <span class="wl-cloud wl-cloud-near"></span>
+            <span class="wl-wind wl-wind-1"></span>
+            <span class="wl-wind wl-wind-2"></span>
+            <span class="wl-wind wl-wind-3"></span>
+            <span class="wl-main">
+                <span class="wl-rain wl-rain-1"></span>
+                <span class="wl-rain wl-rain-2"></span>
+                <span class="wl-rain wl-rain-3"></span>
+            </span>
+        </div>
         <p>Carregando informações climáticas...</p>
     </div>
 
@@ -144,7 +159,7 @@
         </div>
     </div>
     <footer class="footer">
-        <p>&copy; 2024 Clima Tempo🌥️. Todos os direitos reservados.</p>
+        <p class="footer-rights">&copy; 2026 Clima Tempo. Todos os direitos reservados.</p>
     </footer>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
