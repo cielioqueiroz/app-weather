@@ -1,1 +1,10 @@
-config
+node_modules/
+dist/
+.env
+.env.local
+.vercel/
+config/
+.agents/
+skills-lock.json
+.claude/
+*.tsbuildinfo
