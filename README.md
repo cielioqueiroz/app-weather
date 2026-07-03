@@ -1,11 +1,12 @@
 <div align="center">
 
-# 🌦️ Clima·Tempo
+<img src="docs/banner.png" alt="Clima·Tempo — o céu que reage às condições reais" width="920" />
 
-**Previsão do tempo com um céu que reage às condições reais**
+<br /><br />
 
-O painel principal muda de gradiente e ambiente — estrelas à noite, riscos de chuva,
-nuvens à deriva, clarão de trovoada — conforme o clima da cidade consultada.
+**Previsão do tempo com um céu que reage às condições reais** — o painel principal muda
+de gradiente e ambiente (estrelas à noite, riscos de chuva, nuvens à deriva, clarão de
+trovoada) conforme o clima da cidade consultada.
 
 [![Demo](https://img.shields.io/badge/▲_demo-clima--tempo--one--beta.vercel.app-black?style=for-the-badge)](https://clima-tempo-one-beta.vercel.app)
 
@@ -15,15 +16,15 @@ nuvens à deriva, clarão de trovoada — conforme o clima da cidade consultada.
 [![Vercel](https://img.shields.io/badge/Vercel-Serverless-000000?logo=vercel&logoColor=white)](https://vercel.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-<br />
-
-<img src="docs/screenshots/desktop-dark.png" alt="Clima·Tempo — tema escuro com painel-céu noturno estrelado" width="800" />
-
 </div>
 
 ---
 
 ## ✨ Interface
+
+<div align="center">
+  <img src="docs/screenshots/desktop-dark.png" alt="Clima·Tempo — tema escuro com painel-céu noturno estrelado" width="800" />
+</div>
 
 | Tema claro | Mobile |
 | :---: | :---: |
