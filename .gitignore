@@ -8,3 +8,5 @@ config/
 skills-lock.json
 .claude/
 *.tsbuildinfo
+
+.vercel
