@@ -21,5 +21,13 @@ não justifica introduzir estado externo (KV/Redis) nem plano pago num app de po
 não confie nisso como controle de segurança. Usuários com `Referer` removido por extensão de
 privacidade dependem do `Sec-Fetch-Site` para não serem bloqueados.
 
+**O portão só age em cache miss.** A chave do cache de borda é a URL, não os cabeçalhos:
+uma requisição não autorizada para coordenadas que algum usuário legítimo acabou de
+consultar recebe o 200 cacheado sem nunca chegar à função. Isso é aceitável de propósito —
+uma resposta servida do cache não consome quota da OpenWeather, e quota é exatamente o que
+o portão protege. Qualquer coordenada nova é miss, chega à função e toma 403 (verificado na
+produção). Se um dia o objetivo do portão passar a ser confidencialidade dos dados em vez de
+quota, esse raciocínio deixa de valer.
+
 **Gatilho para revisar**: se a conta ganhar cartão ou assinatura paga, o dano deixa de ser
 disponibilidade e vira fatura ilimitada — aí rate limit real passa a ser obrigatório.
