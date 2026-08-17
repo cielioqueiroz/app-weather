@@ -19,7 +19,9 @@ export function SearchBar({ onSearchCity, onUseLocation }: SearchBarProps) {
 
   useEffect(() => {
     let cancelled = false;
-    if (debouncedQuery.trim().length < 2) {
+    // Mínimo de 3 caracteres: com 2, o Nominatim devolve ruído e a gente gasta
+    // requisição num serviço público de graça — ver ADR-0004.
+    if (debouncedQuery.trim().length < 3) {
       setSuggestions([]);
       return;
     }
