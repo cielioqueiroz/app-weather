@@ -6,13 +6,18 @@ import type {
   ForecastEntry,
   ForecastResponse,
   LocationInfo,
+  Reading,
   WeatherBundle,
 } from '../types/weather';
 import { aqiLabel, localDateKey, localHour, msToKmh, weekdayFromDateKey } from './format';
 
 const OW_PROXY = '/api/ow';
+// Chamado direto do navegador, não pelo proxy — ver ADR-0004.
 const NOMINATIM = 'https://nominatim.openstreetmap.org';
 const COMMON = 'units=metric&lang=pt_br';
+
+const ABSENT = { state: 'absent' } as const;
+const UNAVAILABLE = { state: 'unavailable' } as const;
 
 async function fetchJson<T>(url: string): Promise<T> {
   const response = await fetch(url);
@@ -39,35 +44,36 @@ export function fetchCurrentByCoords(lat: number, lon: number): Promise<CurrentW
   return fetchJson<CurrentWeather>(`${OW_PROXY}?endpoint=weather&lat=${lat}&lon=${lon}&${COMMON}`);
 }
 
-async function fetchForecast(lat: number, lon: number): Promise<ForecastEntry[]> {
+async function fetchForecast(lat: number, lon: number): Promise<Reading<ForecastEntry[]>> {
   try {
     const data = await fetchJson<ForecastResponse>(
       `${OW_PROXY}?endpoint=forecast&lat=${lat}&lon=${lon}&${COMMON}&cnt=40`,
     );
-    return data.list ?? [];
+    const list = data.list ?? [];
+    return list.length > 0 ? { state: 'ok', value: list } : ABSENT;
   } catch {
-    return [];
+    return UNAVAILABLE;
   }
 }
 
-async function fetchUvIndex(lat: number, lon: number): Promise<number | null> {
+async function fetchUvIndex(lat: number, lon: number): Promise<Reading<number>> {
   try {
     const data = await fetchJson<{ value?: number }>(`${OW_PROXY}?endpoint=uvi&lat=${lat}&lon=${lon}`);
-    return data.value ?? null;
+    return typeof data.value === 'number' ? { state: 'ok', value: data.value } : ABSENT;
   } catch {
-    return null;
+    return UNAVAILABLE;
   }
 }
 
-async function fetchAirQuality(lat: number, lon: number): Promise<AirQuality | null> {
+async function fetchAirQuality(lat: number, lon: number): Promise<Reading<AirQuality>> {
   try {
     const data = await fetchJson<{ list?: { main?: { aqi?: number } }[] }>(
       `${OW_PROXY}?endpoint=air_pollution&lat=${lat}&lon=${lon}`,
     );
     const aqi = data.list?.[0]?.main?.aqi;
-    return aqi ? { value: aqi, label: aqiLabel(aqi) } : null;
+    return aqi ? { state: 'ok', value: { value: aqi, label: aqiLabel(aqi) } } : ABSENT;
   } catch {
-    return null;
+    return UNAVAILABLE;
   }
 }
 
@@ -161,7 +167,7 @@ export async function fetchWeatherBundle(current: CurrentWeather): Promise<Weath
     current,
     location,
     hourly,
-    daily: buildDailySummaries(hourly, current.timezone),
+    daily: buildDailySummaries(hourly.state === 'ok' ? hourly.value : [], current.timezone),
     uvIndex,
     airQuality,
   };

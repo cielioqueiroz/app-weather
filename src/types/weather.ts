@@ -1,3 +1,12 @@
+/**
+ * Leitura de um indicador. Distingue "a fonte não trouxe esse dado" de
+ * "não conseguimos perguntar" — os dois viravam `null` antes. Ver ADR-0003.
+ */
+export type Reading<T> =
+  | { state: 'ok'; value: T }
+  | { state: 'absent' }
+  | { state: 'unavailable' };
+
 export interface WeatherCondition {
   id: number;
   main: string;
@@ -72,9 +81,11 @@ export interface CitySuggestion {
 
 export interface WeatherBundle {
   current: CurrentWeather;
+  // `location` só embeleza o nome do lugar: sem ela, o nome vindo do clima
+  // atual serve. Falha e ausência levam ao mesmo resultado, então não é Reading.
   location: LocationInfo | null;
-  hourly: ForecastEntry[];
+  hourly: Reading<ForecastEntry[]>;
   daily: DailySummary[];
-  uvIndex: number | null;
-  airQuality: AirQuality | null;
+  uvIndex: Reading<number>;
+  airQuality: Reading<AirQuality>;
 }

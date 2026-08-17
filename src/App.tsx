@@ -71,7 +71,7 @@ export default function App() {
             />
             <StatGrid
               current={bundle.current}
-              nextHours={bundle.hourly}
+              hourly={bundle.hourly}
               uvIndex={bundle.uvIndex}
               airQuality={bundle.airQuality}
             />

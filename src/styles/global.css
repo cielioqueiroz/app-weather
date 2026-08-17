@@ -539,6 +539,10 @@ a {
 .stat[data-tone='mid'] .stat-value { color: var(--tone-mid); }
 .stat[data-tone='high'] .stat-value { color: var(--tone-high); }
 
+/* Indicador sem leitura: recua visualmente, mas diz o motivo em .stat-detail. */
+.stat[data-state] .stat-value { color: var(--muted); }
+.stat[data-state] .stat-icon { opacity: 0.4; }
+
 /* ---------- Previsão ---------- */
 
 .forecast {

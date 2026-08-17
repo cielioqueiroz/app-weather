@@ -1,5 +1,5 @@
 import { aqiTone, msToKmh, uvSeverity, windDirectionLabel } from '../lib/format';
-import type { AirQuality, CurrentWeather, ForecastEntry } from '../types/weather';
+import type { AirQuality, CurrentWeather, ForecastEntry, Reading } from '../types/weather';
 import {
   DropIcon,
   EyeIcon,
@@ -13,9 +13,9 @@ import {
 
 interface StatGridProps {
   current: CurrentWeather;
-  nextHours: ForecastEntry[];
-  uvIndex: number | null;
-  airQuality: AirQuality | null;
+  hourly: Reading<ForecastEntry[]>;
+  uvIndex: Reading<number>;
+  airQuality: Reading<AirQuality>;
 }
 
 interface Stat {
@@ -25,11 +25,23 @@ interface Stat {
   value: string;
   detail?: string;
   tone?: 'low' | 'mid' | 'high';
+  state?: 'absent' | 'unavailable';
 }
 
-export function StatGrid({ current, nextHours, uvIndex, airQuality }: StatGridProps) {
-  const rainProb = nextHours.length > 0 ? Math.round((nextHours[0].pop ?? 0) * 100) : null;
-  const uv = uvIndex !== null ? uvSeverity(uvIndex) : null;
+/** Por que este indicador está sem valor — o usuário não deveria ter que adivinhar. */
+const MISSING_DETAIL = {
+  absent: 'não informado',
+  unavailable: 'indisponível',
+} as const;
+
+export function StatGrid({ current, hourly, uvIndex, airQuality }: StatGridProps) {
+  const rainProb: Reading<number> =
+    hourly.state !== 'ok'
+      ? hourly
+      : hourly.value.length > 0
+        ? { state: 'ok', value: Math.round((hourly.value[0].pop ?? 0) * 100) }
+        : { state: 'absent' };
+  const uv = uvIndex.state === 'ok' ? uvSeverity(uvIndex.value) : null;
 
   const stats: Stat[] = [
     {
@@ -55,22 +67,27 @@ export function StatGrid({ current, nextHours, uvIndex, airQuality }: StatGridPr
       id: 'rain',
       icon: <RainIcon />,
       label: 'Chuva',
-      value: rainProb !== null ? `${rainProb}%` : '--',
+      value: rainProb.state === 'ok' ? `${rainProb.value}%` : '--',
+      detail: rainProb.state === 'ok' ? undefined : MISSING_DETAIL[rainProb.state],
+      state: rainProb.state === 'ok' ? undefined : rainProb.state,
     },
     {
       id: 'uv',
       icon: <SunIcon />,
       label: 'Índice UV',
-      value: uvIndex !== null ? uvIndex.toFixed(1) : '--',
-      detail: uv?.label,
+      value: uvIndex.state === 'ok' ? uvIndex.value.toFixed(1) : '--',
+      detail: uvIndex.state === 'ok' ? uv?.label : MISSING_DETAIL[uvIndex.state],
       tone: uv?.tone,
+      state: uvIndex.state === 'ok' ? undefined : uvIndex.state,
     },
     {
       id: 'air',
       icon: <LeafIcon />,
       label: 'Qualidade do ar',
-      value: airQuality ? airQuality.label : '--',
-      tone: airQuality ? aqiTone(airQuality.value) : undefined,
+      value: airQuality.state === 'ok' ? airQuality.value.label : '--',
+      detail: airQuality.state === 'ok' ? undefined : MISSING_DETAIL[airQuality.state],
+      tone: airQuality.state === 'ok' ? aqiTone(airQuality.value.value) : undefined,
+      state: airQuality.state === 'ok' ? undefined : airQuality.state,
     },
     {
       id: 'visibility',
@@ -89,7 +106,7 @@ export function StatGrid({ current, nextHours, uvIndex, airQuality }: StatGridPr
   return (
     <section className="stats" aria-label="Detalhes do clima">
       {stats.map((stat) => (
-        <article key={stat.id} className="stat" data-tone={stat.tone}>
+        <article key={stat.id} className="stat" data-tone={stat.tone} data-state={stat.state}>
           <span className="stat-icon">{stat.icon}</span>
           <span className="stat-label">{stat.label}</span>
           <span className="stat-value">

@@ -1,19 +1,25 @@
 import { useState } from 'react';
 import { formatLocalTime, shortDateFromDateKey } from '../lib/format';
-import type { DailySummary, ForecastEntry } from '../types/weather';
+import type { DailySummary, ForecastEntry, Reading } from '../types/weather';
 import { WeatherIcon } from './WeatherIcon';
 import { RainIcon, WindIcon } from './icons';
 
 interface ForecastProps {
-  hourly: ForecastEntry[];
+  hourly: Reading<ForecastEntry[]>;
   daily: DailySummary[];
   tzOffset: number;
 }
 
 export function Forecast({ hourly, daily, tzOffset }: ForecastProps) {
   const [tab, setTab] = useState<'today' | 'week'>('today');
-  const nextHours = hourly.slice(0, 8);
+  const nextHours = hourly.state === 'ok' ? hourly.value.slice(0, 8) : [];
   const nextDays = daily.slice(1, 6);
+  // A previsão horária alimenta os dois painéis: se ela falhou, ambos ficam
+  // vazios pelo mesmo motivo, e é esse motivo que a tela precisa dizer.
+  const emptyMessage =
+    hourly.state === 'unavailable'
+      ? 'Não foi possível carregar a previsão agora.'
+      : 'Sem previsão disponível para esta cidade.';
 
   return (
     <section className="forecast" aria-label="Previsão">
@@ -39,6 +45,9 @@ export function Forecast({ hourly, daily, tzOffset }: ForecastProps) {
       </div>
 
       {tab === 'today' ? (
+        nextHours.length === 0 ? (
+          <p className="forecast-empty">{emptyMessage}</p>
+        ) : (
         <ol className="hourly" aria-label="Previsão horária">
           {nextHours.map((hour) => (
             <li key={hour.dt} className="hourly-item">
@@ -51,16 +60,17 @@ export function Forecast({ hourly, daily, tzOffset }: ForecastProps) {
             </li>
           ))}
         </ol>
+        )
       ) : (
-        <DailyList days={nextDays} />
+        <DailyList days={nextDays} emptyMessage={emptyMessage} />
       )}
     </section>
   );
 }
 
-function DailyList({ days }: { days: DailySummary[] }) {
+function DailyList({ days, emptyMessage }: { days: DailySummary[]; emptyMessage: string }) {
   if (days.length === 0) {
-    return <p className="forecast-empty">Sem previsão disponível para os próximos dias.</p>;
+    return <p className="forecast-empty">{emptyMessage}</p>;
   }
 
   // Faixa térmica da semana para posicionar as barras de temperatura.
