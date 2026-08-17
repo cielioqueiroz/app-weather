@@ -137,8 +137,10 @@ vercel --prod
 ## 📁 Estrutura
 
 ```
+CONTEXT.md               # glossário — a linguagem canônica do projeto
+docs/adr/                # decisões de arquitetura e por que foram tomadas
 api/
-  ow.ts                  # proxy serverless do OpenWeatherMap
+  ow.ts                  # proxy serverless do OpenWeatherMap (restrito à mesma origem)
 src/
   components/
     SkyPanel.tsx         # painel-céu animado (hero)
